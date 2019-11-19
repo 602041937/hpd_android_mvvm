@@ -1,12 +1,19 @@
 package com.hpd.hpd_android_mvvm.mvvm_base;
 
+import android.util.Log;
+
+import androidx.lifecycle.ViewModel;
+
 import io.reactivex.disposables.CompositeDisposable;
 
-public class BaseVM {
+public class BaseVM extends ViewModel {
 
-    protected CompositeDisposable compositeDisposable;
+    protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public BaseVM(CompositeDisposable compositeDisposable) {
-        this.compositeDisposable = compositeDisposable;
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        Log.i("BaseVM", "onCleared: ");
+        compositeDisposable.clear();
     }
 }

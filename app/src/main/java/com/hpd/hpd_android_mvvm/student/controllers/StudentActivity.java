@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hpd.hpd_android_mvvm.R;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseActivity;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseAdapter;
+import com.hpd.hpd_android_mvvm.student.viewmodels.StudentVM;
 import com.hpd.hpd_android_mvvm.student.views.StudentCell;
 
 import butterknife.BindView;
@@ -20,14 +22,22 @@ public class StudentActivity extends BaseActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    private StudentVM vm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
         ButterKnife.bind(this);
 
+        vm = ViewModelProviders.of(this).get(StudentVM.class);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new StudentAdapter());
+
+        compositeDisposable.add(vm.students.subscribe(studentBeans -> {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }));
     }
 
     class StudentAdapter extends BaseAdapter {
@@ -42,12 +52,12 @@ public class StudentActivity extends BaseActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             StudentCell cell = (StudentCell) holder.itemView;
             cell.resetBind();
-            cell.vm.setData();
+            cell.vm.setData(vm.students.getValue().get(position));
         }
 
         @Override
         public int getItemCount() {
-            return 100;
+            return vm.students.getValue().size();
         }
     }
 }

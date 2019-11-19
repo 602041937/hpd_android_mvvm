@@ -2,6 +2,7 @@ package com.hpd.hpd_android_mvvm.mvvm_base;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -33,8 +34,8 @@ public class BaseCell extends FrameLayout {
     }
 
     public void resetBind() {
-        compositeDisposable.dispose();
-        compositeDisposable = null;
+        Log.i("BaseCell", "resetBind: ");
+        compositeDisposable.clear();
         compositeDisposable = new CompositeDisposable();
         bindViewModel();
     }
