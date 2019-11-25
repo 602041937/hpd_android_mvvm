@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.hpd.hpd_android_mvvm.R;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseActivity;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseAdapter;
@@ -17,6 +18,7 @@ import com.hpd.hpd_android_mvvm.student.views.StudentCell;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@Route(path = "/student/main")
 public class StudentActivity extends BaseActivity {
 
     @BindView(R.id.recyclerView)
