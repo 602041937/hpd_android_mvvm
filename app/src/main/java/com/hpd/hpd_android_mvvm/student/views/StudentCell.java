@@ -2,8 +2,6 @@ package com.hpd.hpd_android_mvvm.student.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,15 +10,15 @@ import androidx.annotation.Nullable;
 
 import com.hpd.hpd_android_mvvm.R;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseCell;
-import com.hpd.hpd_android_mvvm.student.viewmodels.StudentCellVM;
+import com.hpd.hpd_android_mvvm.router.Router;
+import com.hpd.hpd_android_mvvm.student.viewmodels.StudentCellViewModel;
 import com.jakewharton.rxbinding3.view.RxView;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class StudentCell extends BaseCell {
 
-    public StudentCellVM vm;
+    public StudentCellViewModel vm;
 
     @BindView(R.id.tv_username)
     TextView tvUsername;
@@ -42,22 +40,36 @@ public class StudentCell extends BaseCell {
     }
 
     @Override
-    public void setupView() {
-        super.setupView();
-        View cellView = LayoutInflater.from(getContext()).inflate(R.layout.student_cell, this);
-        ButterKnife.bind(this, cellView);
+    protected Integer initLayout() {
+        return R.layout.student_cell;
     }
 
     @Override
-    public void bindViewModel() {
-        super.bindViewModel();
+    protected void initSetup() {
+        super.initSetup();
 
-        vm = new StudentCellVM(compositeDisposable);
+    }
 
-        compositeDisposable.add(vm.name.subscribe(s -> tvUsername.setText(s)));
-        compositeDisposable.add(vm.age.subscribe(s -> tvAge.setText(s)));
+    @Override
+    protected void initBindView() {
+        super.initBindView();
+
+        compositeDisposable.add(RxView.clicks(parentView).subscribe(unit -> {
+            Router.shared.studentDetail(1);
+        }));
+
         compositeDisposable.add(RxView.clicks(btnClick).subscribe(unit -> {
             vm.name.onNext(vm.name.getValue() + vm.name.getValue());
         }));
+    }
+
+    @Override
+    protected void initBindVM() {
+        super.initBindVM();
+
+        vm = new StudentCellViewModel(compositeDisposable);
+
+        compositeDisposable.add(vm.name.subscribe(s -> tvUsername.setText(s)));
+        compositeDisposable.add(vm.age.subscribe(s -> tvAge.setText(s)));
     }
 }

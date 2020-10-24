@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.alibaba.android.arouter.launcher.ARouter;
+import com.hpd.hpd_android_mvvm.router.Router;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         studentTV.setOnClickListener(view -> {
-            ARouter.getInstance().build("/student/main").navigation();
+            Router.shared.student();
         });
     }
 }

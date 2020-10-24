@@ -1,28 +1,38 @@
 package com.hpd.hpd_android_mvvm.mvvm_base;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseFragment extends Fragment {
 
     protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
+        View view = inflater.inflate(initLayout(), container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         ARouter.getInstance().inject(this);
 
-        if (initLayout() != null) {
-            setContentView(initLayout());
-            ButterKnife.bind(this);
-        }
         initSetup();
         initBindView();
         initBindVM();
@@ -45,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         compositeDisposable.clear();
     }

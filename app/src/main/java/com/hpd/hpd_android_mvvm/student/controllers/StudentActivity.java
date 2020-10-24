@@ -1,6 +1,5 @@
 package com.hpd.hpd_android_mvvm.student.controllers;
 
-import android.os.Bundle;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -12,30 +11,43 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.hpd.hpd_android_mvvm.R;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseActivity;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseAdapter;
-import com.hpd.hpd_android_mvvm.student.viewmodels.StudentVM;
+import com.hpd.hpd_android_mvvm.router.Router;
+import com.hpd.hpd_android_mvvm.student.viewmodels.StudentViewModel;
 import com.hpd.hpd_android_mvvm.student.views.StudentCell;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-@Route(path = "/student/main")
+@Route(path = Router.studentMain)
 public class StudentActivity extends BaseActivity {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private StudentVM vm;
+    private StudentViewModel vm;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student);
-        ButterKnife.bind(this);
+    protected Integer initLayout() {
+        return R.layout.activity_student;
+    }
 
-        vm = ViewModelProviders.of(this).get(StudentVM.class);
+    @Override
+    protected void initSetup() {
+        super.initSetup();
+
+        vm = ViewModelProviders.of(this).get(StudentViewModel.class);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new StudentAdapter());
+    }
+
+    @Override
+    protected void initBindView() {
+        super.initBindView();
+    }
+
+    @Override
+    protected void initBindVM() {
+        super.initBindVM();
 
         compositeDisposable.add(vm.students.subscribe(studentBeans -> {
             recyclerView.getAdapter().notifyDataSetChanged();
