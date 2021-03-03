@@ -4,20 +4,24 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.viewbinding.ViewBinding;
 
-import butterknife.ButterKnife;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+
 import io.reactivex.disposables.CompositeDisposable;
 
-public class BaseCell extends FrameLayout {
+public class BaseCell<T extends ViewBinding> extends FrameLayout {
+
+    protected T binding;
 
     public CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-    protected View parentView = null;
 
     public BaseCell(@NonNull Context context) {
         super(context);
@@ -34,11 +38,8 @@ public class BaseCell extends FrameLayout {
         setup();
     }
 
-    private void setup() {
-        if (initLayout() != null) {
-            parentView = LayoutInflater.from(getContext()).inflate(initLayout(), this);
-            ButterKnife.bind(this, parentView);
-        }
+    protected void setup() {
+        initLayout();
         initSetup();
         initBindView();
         initBindVM();
@@ -48,12 +49,21 @@ public class BaseCell extends FrameLayout {
         Log.i("BaseCell", "resetBind: ");
         compositeDisposable.clear();
         compositeDisposable = new CompositeDisposable();
+        initSetup();
         initBindView();
         initBindVM();
     }
 
-    protected Integer initLayout() {
-        return null;
+    private void initLayout() {
+
+        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+        Class cls = (Class) type.getActualTypeArguments()[0];
+        try {
+            Method inflate = cls.getDeclaredMethod("inflate", LayoutInflater.class, ViewGroup.class, boolean.class);
+            binding = (T) inflate.invoke(null, LayoutInflater.from(getContext()), this, true);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initSetup() {

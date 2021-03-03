@@ -5,30 +5,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.hpd.hpd_android_mvvm.R;
+import com.hpd.hpd_android_mvvm.databinding.ActivityStudentBinding;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseActivity;
 import com.hpd.hpd_android_mvvm.mvvm_base.BaseAdapter;
 import com.hpd.hpd_android_mvvm.router.Router;
 import com.hpd.hpd_android_mvvm.student.viewmodels.StudentViewModel;
 import com.hpd.hpd_android_mvvm.student.views.StudentCell;
 
-import butterknife.BindView;
-
 @Route(path = Router.studentMain)
-public class StudentActivity extends BaseActivity {
-
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+public class StudentActivity extends BaseActivity<ActivityStudentBinding> {
 
     private StudentViewModel vm;
-
-    @Override
-    protected Integer initLayout() {
-        return R.layout.activity_student;
-    }
 
     @Override
     protected void initSetup() {
@@ -36,8 +25,8 @@ public class StudentActivity extends BaseActivity {
 
         vm = ViewModelProviders.of(this).get(StudentViewModel.class);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new StudentAdapter());
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setAdapter(new StudentAdapter());
     }
 
     @Override
@@ -50,7 +39,7 @@ public class StudentActivity extends BaseActivity {
         super.initBindVM();
 
         compositeDisposable.add(vm.students.subscribe(studentBeans -> {
-            recyclerView.getAdapter().notifyDataSetChanged();
+            binding.recyclerView.getAdapter().notifyDataSetChanged();
         }));
     }
 

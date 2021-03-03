@@ -8,13 +8,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 
-import butterknife.ButterKnife;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+
 import io.reactivex.disposables.CompositeDisposable;
 
-public class BaseFragment extends Fragment {
+public class BaseFragment<T extends ViewBinding> extends Fragment {
+
+    protected T binding;
 
     protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -22,9 +28,15 @@ public class BaseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(initLayout(), container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+        Class cls = (Class) type.getActualTypeArguments()[0];
+        try {
+            Method inflate = cls.getDeclaredMethod("inflate", LayoutInflater.class, ViewGroup.class, boolean.class);
+            binding = (T) inflate.invoke(null, inflater, container, false);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return binding.getRoot();
     }
 
     @Override
@@ -36,10 +48,6 @@ public class BaseFragment extends Fragment {
         initSetup();
         initBindView();
         initBindVM();
-    }
-
-    protected Integer initLayout() {
-        return null;
     }
 
     protected void initSetup() {
